@@ -7,8 +7,8 @@ from io import BytesIO
 @st.cache_resource
 def load_model():
     model_id = "runwayml/stable-diffusion-v1-5"
-    pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
-    pipe = pipe.to("cuda")
+    # Load the model with default settings, which will run on the CPU
+    pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float32)  # Use float32 for CPU
     return pipe
 
 def generate_image_from_text(pipe, prompt):
