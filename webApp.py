@@ -1,5 +1,5 @@
 import torch
-from diffusers import StableDiffusionPipeline
+from diffusers.pipelines.stable_diffusion import StableDiffusionPipeline
 from PIL import Image
 import streamlit as st
 from io import BytesIO
@@ -13,20 +13,18 @@ def load_model():
 
 def generate_image_from_text(pipe, prompt, progress_bar):
     def callback(step: int, timestep: int, latents: torch.FloatTensor):
-        # Update progress bar based on the current step
         total_steps = pipe.scheduler.config.num_train_timesteps
         progress = step / total_steps
         progress_bar.progress(progress)
 
-    # Generate the image with progress callback
-    image = pipe(prompt, callback=callback).images[0]
+    # Generate the image with progress callback and set callback_steps
+    image = pipe(prompt, callback=callback, callback_steps=1).images[0]
     progress_bar.progress(100)  # Ensure progress bar hits 100% at the end
     return image
-
 st.title("Image Generation with Stable Diffusion")
 
 prompt = st.text_input("Enter your prompt:", "A beautiful landscape with mountains and a lake at sunset")
-
+  
 if st.button("Generate Image"):
     pipe = load_model()
     progress_bar = st.progress(0)
